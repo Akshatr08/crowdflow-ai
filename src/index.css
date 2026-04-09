@@ -1,52 +1,83 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+/* ==========================================
+   DESIGN TOKENS — LIGHT
+   ========================================== */
 :root {
-  --bg-main: #f8fafc;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --bg-card: rgba(255, 255, 255, 0.4);
-  --bg-card-inner: rgba(255, 255, 255, 0.6);
-  --border-subtle: rgba(15, 23, 42, 0.05);
-  --accent-primary: #3b82f6;
-  --accent-bg: rgba(59, 130, 246, 0.1);
-  --accent-danger: #ef4444;
-  --accent-warning: #f59e0b;
-  --accent-success: #10b981;
-  --shadow-premium: inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 24px rgba(0, 0, 0, 0.03);
-  --glass-blur: blur(32px);
-  --transition-fast: 0.2s ease;
-  --transition-smooth: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --bg-main:          #f8fafc;
+  --text-main:        #0f172a;
+  --text-muted:       #64748b;
+  --bg-card:          rgba(255, 255, 255, 0.4);
+  --bg-card-inner:    rgba(255, 255, 255, 0.6);
+  --border-subtle:    rgba(15, 23, 42, 0.07);
+  --accent-primary:   #3b82f6;
+  --accent-bg:        rgba(59, 130, 246, 0.1);
+  --accent-danger:    #ef4444;
+  --accent-warning:   #f59e0b;
+  --accent-success:   #10b981;
+  --shadow-premium:   inset 0 1px 0 rgba(255,255,255,0.6), 0 4px 24px rgba(0,0,0,0.04);
+  --glass-blur:       blur(32px);
+  --transition-fast:  0.18s ease;
+  --transition-smooth:0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  --focus-ring:       0 0 0 3px rgba(59, 130, 246, 0.45);
 }
 
+/* ==========================================
+   DARK THEME
+   ========================================== */
 [data-theme='dark'] {
-  --bg-main: #040814;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --bg-card: rgba(15, 23, 42, 0.4);
-  --bg-card-inner: rgba(30, 41, 59, 0.4);
-  --border-subtle: rgba(255, 255, 255, 0.06);
-  --accent-primary: #38bdf8;
-  --accent-bg: rgba(56, 189, 248, 0.1);
-  --accent-danger: #f87171;
-  --accent-warning: #fbbf24;
-  --accent-success: #34d399;
-  --shadow-premium: inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 32px rgba(0, 0, 0, 0.4);
+  --bg-main:          #040814;
+  --text-main:        #f8fafc;
+  --text-muted:       #94a3b8;
+  --bg-card:          rgba(15, 23, 42, 0.4);
+  --bg-card-inner:    rgba(30, 41, 59, 0.4);
+  --border-subtle:    rgba(255, 255, 255, 0.06);
+  --accent-primary:   #38bdf8;
+  --accent-bg:        rgba(56, 189, 248, 0.1);
+  --accent-danger:    #f87171;
+  --accent-warning:   #fbbf24;
+  --accent-success:   #34d399;
+  --shadow-premium:   inset 0 1px 0 rgba(255,255,255,0.05), 0 8px 32px rgba(0,0,0,0.4);
+  --focus-ring:       0 0 0 3px rgba(56, 189, 248, 0.45);
 }
 
-* {
+/* ==========================================
+   EVACUATION OVERRIDE THEME
+   ========================================== */
+[data-theme='evac'] {
+  --bg-main:          #200000;
+  --text-main:        #ffffff;
+  --text-muted:       #fca5a5;
+  --bg-card:          rgba(153, 27, 27, 0.3);
+  --bg-card-inner:    rgba(220, 38, 38, 0.2);
+  --border-subtle:    rgba(239, 68, 68, 0.35);
+  --accent-primary:   #f87171;
+  --accent-bg:        rgba(239, 68, 68, 0.2);
+  --accent-danger:    #ef4444;
+  --accent-warning:   #fbbf24;
+  --accent-success:   #b91c1c;
+  --shadow-premium:   inset 0 1px 0 rgba(255,255,255,0.2), 0 8px 32px rgba(220,38,38,0.4);
+  --focus-ring:       0 0 0 3px rgba(248, 113, 113, 0.5);
+}
+
+/* ==========================================
+   RESET & BASE
+   ========================================== */
+*, *::before, *::after {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  font-family: 'Inter', -apple-system, sans-serif;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
   background-color: var(--bg-main);
   color: var(--text-main);
   transition: background-color var(--transition-smooth), color var(--transition-smooth);
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4 {
@@ -54,6 +85,21 @@ h1, h2, h3, h4 {
   letter-spacing: -0.03em;
 }
 
+/* ==========================================
+   ACCESSIBILITY — FOCUS RING
+   Always show for keyboard users, never for mouse
+   ========================================== */
+:focus { outline: none; }
+
+:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 6px;
+}
+
+/* ==========================================
+   GLASS CARD
+   ========================================== */
 .glass-card {
   background: var(--bg-card);
   backdrop-filter: var(--glass-blur);
@@ -64,34 +110,47 @@ h1, h2, h3, h4 {
   padding: 24px;
 }
 
-.shiny-text {
-  background: linear-gradient(120deg, var(--text-main) 40%, var(--accent-primary) 45%, var(--text-main) 50%);
-  background-size: 200% auto;
-  color: transparent;
-  -webkit-background-clip: text;
-  background-clip: text;
-  animation: shine 15s linear infinite;
-  display: inline-block;
+/* ==========================================
+   SIDEBAR NAV BUTTON — CSS hover (no JS)
+   ========================================== */
+.sidebar-nav-btn {
+  width: 100%;
+  text-align: left;
 }
 
-@keyframes shine {
-  to { background-position: 200% center; }
+.sidebar-nav-btn:hover:not(.sidebar-nav-btn--active) {
+  background: var(--border-subtle) !important;
+  color: var(--text-main) !important;
 }
 
-::-webkit-scrollbar {
-  width: 6px;
-}
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-::-webkit-scrollbar-thumb {
-  background: var(--border-subtle);
-  border-radius: 4px;
-}
-::-webkit-scrollbar-thumb:hover {
-  background: var(--text-muted);
+.sidebar-nav-btn:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
 }
 
+/* ==========================================
+   DASHBOARD WIDGET — CSS hover (no JS)
+   ========================================== */
+.dashboard-widget:hover {
+  transform: translateY(-2px);
+}
+
+.dashboard-widget:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+  border-radius: 8px;
+}
+
+/* ==========================================
+   VENUE CARD HOVER
+   ========================================== */
+.venue-card:hover {
+  transform: translateY(-2px);
+}
+
+/* ==========================================
+   BUTTONS
+   ========================================== */
 .btn-primary {
   background: var(--bg-card-inner);
   color: var(--text-main);
@@ -102,6 +161,8 @@ h1, h2, h3, h4 {
   cursor: pointer;
   transition: all var(--transition-fast);
   letter-spacing: -0.01em;
+  font-family: inherit;
+  font-size: 0.875rem;
 }
 
 .btn-primary:hover {
@@ -111,27 +172,98 @@ h1, h2, h3, h4 {
   transform: translateY(-1px);
 }
 
+.btn-primary:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.btn-primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* ==========================================
+   SECTION TITLE
+   ========================================== */
+.section-title {
+  color: var(--text-main);
+  font-size: 1.1rem;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  margin-bottom: 4px;
+}
+
+/* ==========================================
+   SHINY ANIMATED TEXT
+   ========================================== */
+.shiny-text {
+  background: linear-gradient(
+    120deg,
+    var(--text-main) 40%,
+    var(--accent-primary) 45%,
+    var(--text-main) 50%
+  );
+  background-size: 200% auto;
+  color: transparent;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: shine 12s linear infinite;
+  display: inline-block;
+}
+
+@keyframes shine {
+  to { background-position: 200% center; }
+}
+
+/* ==========================================
+   SCROLLBAR (webkit)
+   ========================================== */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  { background: var(--border-subtle); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text-muted); }
+
+/* ==========================================
+   ANIMATIONS
+   ========================================== */
 .animate-pulse {
   animation: pulse 3s infinite ease-in-out;
 }
 
 @keyframes pulse {
-  0% { opacity: 1; }
-  50% { opacity: 0.6; }
-  100% { opacity: 1; }
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
 }
 
 .animate-fade-in {
-  animation: fadeIn 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+  animation: fadeIn 0.5s cubic-bezier(0.4, 0, 0.2, 1) both;
 }
 
 @keyframes fadeIn {
-  from { opacity: 0; transform: translateY(10px); }
-  to { opacity: 1; transform: translateY(0); }
+  from { opacity: 0; transform: translateY(8px); }
+  to   { opacity: 1; transform: translateY(0); }
 }
 
+/* Audit Log Rows */
+.audit-row:hover {
+  background: var(--accent-bg) !important;
+}
+
+/* Base animations consolidated */
 @keyframes slideRight {
-  0% { transform: translateX(-100%); }
-  50% { transform: translateX(0); }
+  0%   { transform: translateX(-100%); }
+  50%  { transform: translateX(0); }
   100% { transform: translateX(100%); }
+}
+
+/* ==========================================
+   REDUCED MOTION — respect user preference
+   ========================================== */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

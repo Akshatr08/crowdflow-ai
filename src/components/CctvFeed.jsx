@@ -80,4 +80,4 @@ const CctvFeed = () => {
   );
 };
 
-export default CctvFeed;
+export default React.memo(CctvFeed);

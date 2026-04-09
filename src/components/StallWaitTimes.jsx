@@ -69,4 +69,4 @@ const StallWaitTimes = ({ stalls = [] }) => {
   );
 };
 
-export default StallWaitTimes;
+export default React.memo(StallWaitTimes);

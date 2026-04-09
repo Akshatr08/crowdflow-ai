@@ -1,125 +1,156 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
 import Sidebar from './Sidebar';
 import Dashboard from './Dashboard';
-import Venues from './Venues';
-import Analytics from './Analytics';
-import Settings from './Settings';
-import Operator from './Operator';
-import Hardware from './Hardware';
-import Audit from './Audit';
 import Notifications from './Notifications';
-import { fetchLiveZones, fetchLiveStalls } from '../services/api';
+import SmartBanner from './SmartBanner';
+import { useStadiumData } from '../hooks/useStadiumData';
+import { trackPageView, trackSecurityEvent, logEvent } from '../services/analytics';
 import './Dashboard.css';
 
+// Lazy-load non-critical tabs to reduce initial bundle
+const Venues    = lazy(() => import('./Venues'));
+const Analytics = lazy(() => import('./Analytics'));
+const Settings  = lazy(() => import('./Settings'));
+const Operator  = lazy(() => import('./Operator'));
+const Hardware  = lazy(() => import('./Hardware'));
+const Audit     = lazy(() => import('./Audit'));
+
+import Skeleton, { DashboardSkeleton, VenueSkeleton } from './shared/Skeleton';
+
+const TabFallback = ({ tab }) => {
+  if (tab === 'dashboard') return <DashboardSkeleton />;
+  if (tab === 'venues') return <VenueSkeleton />;
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+      <Skeleton height="60px" />
+      <Skeleton height="300px" />
+    </div>
+  );
+};
+
+/**
+ * CROWDFLOW AI — PRIMARY ARCHITECTURAL RENDERER
+ *
+ * Master OS-level component: orchestrates SSE data, theme overrides,
+ * notification state, and routing. All heavy tabs are lazy-loaded.
+ */
 const AppLayout = () => {
-  const [activeTab, setActiveTab] = useState('dashboard');
-  
-  // Global Data State
-  const [zones, setZones] = useState([]);
-  const [stalls, setStalls] = useState([]);
+  // Persistence initialization
+  const [activeTab, setActiveTab] = useState(() => localStorage.getItem('cf_activeTab') || 'dashboard');
   const [notifications, setNotifications] = useState([]);
   const [auditLogs, setAuditLogs] = useState([]);
-  const [theme, setTheme] = useState('dark');
+  const [theme, setTheme] = useState(() => localStorage.getItem('cf_theme') || 'dark');
+  const [evacMode, setEvacMode] = useState(() => localStorage.getItem('cf_evacMode') === 'true');
+  const [simActive, setSimActive] = useState(false);
 
-  const prevZonesRef = useRef([]);
-  const prevBestStallRef = useRef(null);
+  // SSE-based real-time data (replaces dual polling intervals)
+  const { zones, stalls, connected } = useStadiumData();
 
-  // Apply Theme globally
+  // Apply theme globally; EVAC mode overrides to crimson
   useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
+    document.documentElement.setAttribute('data-theme', evacMode ? 'evac' : theme);
+    localStorage.setItem('cf_theme', theme);
+    localStorage.setItem('cf_evacMode', evacMode);
 
-  const toggleTheme = () => setTheme(prev => prev === 'dark' ? 'light' : 'dark');
+    trackSecurityEvent(evacMode ? 'evac_activated' : 'evac_deactivated', {
+      source: 'manual_override',
+      density_snapshot: zones.filter(z => z.density === 'high').length,
+      critical: evacMode
+    });
+  }, [theme, evacMode, zones]);
 
-  const removeNotification = (id) => {
+  // Track page views and persist active tab
+  useEffect(() => {
+    trackPageView(activeTab);
+    localStorage.setItem('cf_activeTab', activeTab);
+  }, [activeTab]);
+
+  // Track connectivity changes
+  const prevConnected = useRef(connected);
+  useEffect(() => {
+    if (prevConnected.current !== connected) {
+      logEvent('network_status_change', { status: connected ? 'online' : 'offline' });
+      prevConnected.current = connected;
+    }
+  }, [connected]);
+
+  const toggleTheme = useCallback(() => setTheme(prev => prev === 'dark' ? 'light' : 'dark'), []);
+
+  const removeNotification = useCallback((id) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
-  };
+  }, []);
 
-  const addNotification = (msg, type) => {
-    const id = Date.now() + Math.random();
+  // Stable notification adder — useCallback prevents effect re-triggering
+  const addNotification = useCallback((msg, type) => {
+    const id = crypto.randomUUID(); // Cryptographically secure ID
     setNotifications(prev => [...prev, { id, msg, type }]);
-    
-    // Log to audit history with fixed timestamp
-    const nowStr = new Date().toLocaleTimeString();
-    setAuditLogs(prev => [{ time: nowStr, msg, type }, ...prev]);
-    
-    setTimeout(() => removeNotification(id), 6000);
-  };
+    setAuditLogs(prev => [{
+      time: new Date().toLocaleTimeString(),
+      msg,
+      type
+    }, ...prev]);
+    setTimeout(() => setNotifications(prev => prev.filter(n => n.id !== id)), 6000);
+  }, []);
 
-  // State refs to prevent alert spamming loops
+  // State refs to prevent duplicate alerts
   const alertedZones = useRef(new Set());
   const prevBestStallRef = useRef(null);
 
-  // Detect overcrowded zones globally (debounced)
+  // Detect overcrowded zones
   useEffect(() => {
-    if (zones.length > 0) {
-      zones.forEach(zone => {
-        const isAlerted = alertedZones.current.has(zone.id);
-        if (zone.density === 'high' && !isAlerted) {
-          addNotification(`${zone.name} is now heavily congested.`, 'warning');
-          alertedZones.current.add(zone.id);
-        } else if (zone.density !== 'high' && isAlerted) {
-          // Reset the alert state once it drops below high
-          alertedZones.current.delete(zone.id);
-        }
-      });
-    }
-  }, [zones]);
-
-  // Detect better stall options globally
-  useEffect(() => {
-    if (stalls.length > 0) {
-      const sortedStalls = [...stalls].sort((a, b) => a.score - b.score);
-      const best = sortedStalls[0];
-
-      if (prevBestStallRef.current && prevBestStallRef.current.id !== best.id) {
-        addNotification(`Update: ${best.name} is now the most optimal route.`, 'success');
+    zones.forEach(zone => {
+      const isAlerted = alertedZones.current.has(zone.id);
+      if (zone.density === 'high' && !isAlerted) {
+        addNotification(`${zone.name} is now heavily congested.`, 'warning');
+        alertedZones.current.add(zone.id);
+      } else if (zone.density !== 'high' && isAlerted) {
+        alertedZones.current.delete(zone.id);
       }
-      prevBestStallRef.current = best;
+    });
+  }, [zones, addNotification]);
+
+  // Detect best stall changes
+  useEffect(() => {
+    if (stalls.length === 0) return;
+    const best = [...stalls].sort((a, b) => a.score - b.score)[0];
+    if (prevBestStallRef.current && prevBestStallRef.current.id !== best.id) {
+      addNotification(`Update: ${best.name} is now the most optimal route.`, 'success');
     }
-  }, [stalls]);
+    prevBestStallRef.current = best;
+  }, [stalls, addNotification]);
 
-  // Polling logic
-  useEffect(() => {
-    const getZones = async () => {
-      const data = await fetchLiveZones();
-      if (data.length) setZones(data);
-    };
-    getZones();
-    const interval = setInterval(getZones, 2500);
-    return () => clearInterval(interval);
-  }, []);
-
-  useEffect(() => {
-    const getStalls = async () => {
-      const data = await fetchLiveStalls();
-      if (data.length) setStalls(data);
-    };
-    getStalls();
-    const interval = setInterval(getStalls, 4000);
-    return () => clearInterval(interval);
-  }, []);
-
-  // Render Engine
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard': return <Dashboard zones={zones} stalls={stalls} />;
-      case 'venues': return <Venues />;
-      case 'hardware': return <Hardware />;
-      case 'analytics': return <Analytics />;
-      case 'audit': return <Audit auditLogs={auditLogs} />;
-      case 'settings': return <Settings theme={theme} toggleTheme={toggleTheme} />;
-      case 'operator': return <Operator />;
-      default: return <Dashboard zones={zones} stalls={stalls} />;
+      case 'dashboard': return <Dashboard zones={zones} stalls={stalls} evacMode={evacMode} simActive={simActive} setSimActive={setSimActive} />;
+      case 'venues':    return <Suspense fallback={<TabFallback tab="venues" />}><Venues /></Suspense>;
+      case 'hardware':  return <Suspense fallback={<TabFallback tab="hardware" />}><Hardware zones={zones} /></Suspense>;
+      case 'analytics': return <Suspense fallback={<TabFallback tab="analytics" />}><Analytics zones={zones} /></Suspense>;
+      case 'audit':     return <Suspense fallback={<TabFallback tab="audit" />}><Audit auditLogs={auditLogs} /></Suspense>;
+      case 'settings':  return <Suspense fallback={<TabFallback tab="settings" />}><Settings theme={theme} toggleTheme={toggleTheme} /></Suspense>;
+      case 'operator':  return <Suspense fallback={<TabFallback tab="operator" />}><Operator /></Suspense>;
+      default:          return <Dashboard zones={zones} stalls={stalls} evacMode={evacMode} simActive={simActive} setSimActive={setSimActive} />;
     }
   };
 
   return (
-    <div className="dashboard-layout animate-fade-in">
-      <Notifications notifications={notifications} removeNotification={removeNotification} />
-      <Sidebar activeTab={activeTab} setActiveTab={setActiveTab} />
-      <div style={{ flexGrow: 1, padding: '24px', overflowY: 'auto' }}>
-        {renderContent()}
+    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', width: '100vw', overflow: 'hidden' }}>
+      <SmartBanner zones={zones} stalls={stalls} evacMode={evacMode} connected={connected} />
+      <div className="dashboard-layout animate-fade-in" style={{ flex: 1, display: 'flex' }}>
+        <Notifications notifications={notifications} removeNotification={removeNotification} />
+        <Sidebar
+          activeTab={activeTab}
+          setActiveTab={setActiveTab}
+          evacMode={evacMode}
+          setEvacMode={setEvacMode}
+          connected={connected}
+        />
+        <main
+          role="main"
+          aria-label="Main dashboard content"
+          style={{ flexGrow: 1, padding: '24px', overflowY: 'auto', position: 'relative' }}
+        >
+          {renderContent()}
+        </main>
       </div>
     </div>
   );
