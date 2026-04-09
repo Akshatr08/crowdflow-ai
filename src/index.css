@@ -105,9 +105,9 @@ h1, h2, h3, h4 {
   backdrop-filter: var(--glass-blur);
   -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-subtle);
-  border-radius: 16px;
+  border-radius: 20px;
   box-shadow: var(--shadow-premium);
-  padding: 24px;
+  padding: 32px;
 }
 
 /* ==========================================

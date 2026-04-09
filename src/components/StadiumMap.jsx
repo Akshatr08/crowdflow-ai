@@ -14,21 +14,13 @@ const stableStaffCount = (density, zoneId) =>
 
 /**
  * @component StadiumMap
- * Accessibility: every zone node is a <button> with keyboard support.
- * Density is conveyed via colour + text label (not colour alone).
+ * Architectural SVG schematic representing the stadium sectors and pitch.
  */
 const StadiumMap = ({ zones = [] }) => {
   const [selectedZone, setSelectedZone] = useState(null);
 
   const handleSelect = useCallback((zone) => setSelectedZone(zone), []);
   const handleClose = useCallback(() => setSelectedZone(null), []);
-
-  const handleKeyDown = useCallback((e, zone) => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      setSelectedZone(zone);
-    }
-  }, []);
 
   return (
     <div
@@ -37,16 +29,16 @@ const StadiumMap = ({ zones = [] }) => {
     >
       {/* HUD Header */}
       <div style={{ position: 'absolute', top: 20, left: 24, zIndex: 10 }}>
-        <h3 style={{ fontSize: '1.2rem', color: 'var(--text-main)' }}>Live Sector Topography</h3>
+        <h3 className="section-title">Architectural Sector Topography</h3>
         <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-          Interactive tactical map — select a zone node.
+          Tactical Command View — click a stand to inspect.
         </p>
       </div>
 
-      {/* Legend — colour + text label, not colour alone */}
+      {/* Legend */}
       <div
         role="img"
-        aria-label="Map legend: green = Clear, amber = Moderate, red = Critical"
+        aria-label="Density Legend"
         style={{
           position: 'absolute', top: 20, right: 24, zIndex: 10,
           display: 'flex', gap: '12px',
@@ -63,22 +55,22 @@ const StadiumMap = ({ zones = [] }) => {
         ))}
       </div>
 
-      {/* Map Arena */}
-      <div style={{
-        position: 'absolute', inset: 0,
-        display: 'flex', justifyContent: 'center', alignItems: 'center',
-        background: 'radial-gradient(circle at center, var(--bg-card) 0%, transparent 70%)'
-      }}>
-        {/* Playfield centre */}
-        <div style={{
-          position: 'absolute', width: '30%', height: '42%',
-          background: 'var(--bg-card-inner)',
-          border: '1px solid var(--border-subtle)',
-          borderRadius: '16px',
-          boxShadow: 'inset 0 0 40px rgba(0,0,0,0.1)'
-        }} aria-hidden="true" />
+      {/* SVG Arena */}
+      <svg
+        viewBox="0 0 800 600"
+        preserveAspectRatio="xMidYMid meet"
+        style={{
+          width: '100%', height: '100%',
+          background: 'radial-gradient(circle at center, var(--bg-card) 0%, transparent 80%)'
+        }}
+        onClick={(e) => { if (e.target.tagName !== 'path') handleClose(); }}
+      >
+        {/* Field / Pitch Markings */}
+        <ellipse cx="400" cy="300" rx="230" ry="160" fill="var(--bg-card-inner)" stroke="var(--border-subtle)" strokeWidth="1" />
+        <circle cx="400" cy="300" r="40" fill="none" stroke="var(--border-subtle)" strokeWidth="1" strokeDasharray="4 4" />
+        <line x1="170" y1="300" x2="630" y2="300" stroke="var(--border-subtle)" strokeWidth="1" strokeDasharray="2 2" />
 
-        {/* Zone Nodes — fully keyboard-accessible buttons */}
+        {/* Stadium Stands (Paths) */}
         {zones.map(zone => {
           const conf = mapConfig[zone.id];
           if (!conf) return null;
@@ -87,117 +79,104 @@ const StadiumMap = ({ zones = [] }) => {
           const isSelected = selectedZone?.id === zone.id;
 
           return (
-            <button
-              key={zone.id}
-              type="button"
-              onClick={() => handleSelect(zone)}
-              onKeyDown={(e) => handleKeyDown(e, zone)}
-              aria-pressed={isSelected}
-              aria-label={`Zone: ${zone.name} — ${styleConf.label} density`}
-              style={{
-                position: 'absolute',
-                ...conf.pos,
-                borderRadius: conf.radius || '8px',
-                border: `2px solid ${isSelected ? 'var(--accent-primary)' : 'var(--border-subtle)'}`,
-                cursor: 'pointer',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                overflow: 'hidden',
-                backgroundColor: 'var(--bg-main)',
-                transform: isSelected ? 'scale(1.08)' : 'scale(1)',
-                zIndex: isSelected ? 5 : 2,
-                padding: 0,
-                outline: 'none'
-              }}
-            >
-              {/* Density colour overlay */}
-              <div
+            <g key={zone.id} style={{ cursor: 'pointer' }} onClick={(e) => { e.stopPropagation(); handleSelect(zone); }}>
+              <path
+                d={conf.path}
+                fill={styleConf.bg}
+                fillOpacity={isSelected ? 0.9 : styleConf.opacity}
+                stroke={isSelected ? 'var(--accent-primary)' : 'var(--border-subtle)'}
+                strokeWidth={isSelected ? 3 : 1}
                 className={styleConf.pulse ? 'animate-pulse' : ''}
                 style={{
-                  position: 'absolute', inset: 2,
-                  backgroundColor: styleConf.bg,
-                  opacity: styleConf.opacity,
-                  borderRadius: conf.radius ? 'inherit' : '4px',
-                  transition: 'background-color 1s ease, opacity 1s ease'
+                  transition: 'all 0.4s ease',
+                  filter: isSelected ? 'drop-shadow(0 0 10px rgba(56,189,248,0.5))' : 'none'
                 }}
-                aria-hidden="true"
               />
-              <span style={{ position: 'relative', zIndex: 2, fontSize: '0.72rem', fontWeight: 'bold', color: 'var(--text-main)', opacity: 0.85, textAlign: 'center', lineHeight: 1.2, pointerEvents: 'none' }}>
+              <text
+                x={conf.labelPos.x}
+                y={conf.labelPos.y}
+                textAnchor="middle"
+                style={{
+                  fill: 'var(--text-main)',
+                  fontSize: '12px',
+                  fontWeight: 'bold',
+                  pointerEvents: 'none',
+                  opacity: 0.8
+                }}
+              >
                 {conf.labelRef}
-              </span>
-            </button>
+              </text>
+            </g>
           );
         })}
+      </svg>
 
-        {/* Zone Inspector Panel */}
-        {selectedZone && (() => {
-          const styleConf = DENSITY_STYLES[selectedZone.density] ?? DENSITY_STYLES.low;
-          return (
-            <div
-              className="animate-fade-in glass-card"
-              role="dialog"
-              aria-label={`Zone details: ${selectedZone.name}`}
-              aria-modal="false"
-              style={{
-                position: 'absolute', bottom: '24px', left: '24px',
-                width: '280px', padding: '20px', zIndex: 20,
-                background: 'var(--bg-card-inner)',
-                borderLeft: `4px solid ${styleConf.bg}`
-              }}
-            >
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
-                <h4 style={{ color: 'var(--text-main)', fontSize: '1.1rem' }}>{selectedZone.name}</h4>
-                <button
-                  type="button"
-                  onClick={handleClose}
-                  aria-label="Close zone details"
-                  style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.4rem', lineHeight: 1, padding: '2px 6px', borderRadius: '4px' }}
-                >
-                  ×
-                </button>
+      {/* Zone Inspector Panel */}
+      {selectedZone && (() => {
+        const styleConf = DENSITY_STYLES[selectedZone.density] ?? DENSITY_STYLES.low;
+        return (
+          <div
+            className="animate-fade-in glass-card"
+            role="dialog"
+            aria-label={`Zone details: ${selectedZone.name}`}
+            aria-modal="false"
+            style={{
+              position: 'absolute', bottom: '24px', left: '24px',
+              width: '280px', padding: '20px', zIndex: 20,
+              background: 'var(--bg-card-inner)',
+              borderLeft: `4px solid ${styleConf.bg}`
+            }}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '12px' }}>
+              <h4 style={{ color: 'var(--text-main)', fontSize: '1.1rem' }}>{selectedZone.name}</h4>
+              <button
+                type="button"
+                onClick={handleClose}
+                aria-label="Close zone details"
+                style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', fontSize: '1.4rem', lineHeight: 1, padding: '2px 6px', borderRadius: '4px' }}
+              >
+                ×
+              </button>
+            </div>
+
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+              {/* Density row — colour + text */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Current State:</span>
+                <span style={{ color: styleConf.bg, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.85rem' }}>
+                  {styleConf.label} ({selectedZone.density})
+                </span>
               </div>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {/* Density row — colour + text */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>Current State:</span>
-                  <span style={{ color: styleConf.bg, fontWeight: 700, textTransform: 'uppercase', fontSize: '0.85rem' }}>
-                    {styleConf.label} ({selectedZone.density})
-                  </span>
-                </div>
+              {/* Progress bar */}
+              <div
+                role="meter"
+                aria-label={`Capacity: ${selectedZone.density}`}
+                aria-valuenow={selectedZone.density === 'high' ? 92 : selectedZone.density === 'medium' ? 55 : 15}
+                aria-valuemin={0} aria-valuemax={100}
+                style={{ width: '100%', height: '4px', background: 'var(--border-subtle)', borderRadius: '2px', overflow: 'hidden' }}
+              >
+                <div style={{
+                  height: '100%',
+                  background: styleConf.bg,
+                  width: selectedZone.density === 'high' ? '92%' : selectedZone.density === 'medium' ? '55%' : '15%',
+                  transition: 'width 1s ease'
+                }} />
+              </div>
 
-                {/* Progress bar */}
-                <div
-                  role="meter"
-                  aria-label={`Capacity: ${selectedZone.density}`}
-                  aria-valuenow={selectedZone.density === 'high' ? 92 : selectedZone.density === 'medium' ? 55 : 15}
-                  aria-valuemin={0} aria-valuemax={100}
-                  style={{ width: '100%', height: '4px', background: 'var(--border-subtle)', borderRadius: '2px', overflow: 'hidden' }}
-                >
-                  <div style={{
-                    height: '100%',
-                    background: styleConf.bg,
-                    width: selectedZone.density === 'high' ? '92%' : selectedZone.density === 'medium' ? '55%' : '15%',
-                    transition: 'width 1s ease'
-                  }} />
-                </div>
-
-                {/* Stats — deterministic, not random */}
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-                    Active nodes: {stableNodeCount(selectedZone.id)}
-                  </span>
-                  <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
-                    Staff: {stableStaffCount(selectedZone.density, selectedZone.id)}
-                  </span>
-                </div>
+              {/* Stats — deterministic, not random */}
+              <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: '4px' }}>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                  Active nodes: {stableNodeCount(selectedZone.id)}
+                </span>
+                <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>
+                  Staff: {stableStaffCount(selectedZone.density, selectedZone.id)}
+                </span>
               </div>
             </div>
-          );
-        })()}
-      </div>
+          </div>
+        );
+      })()}
     </div>
   );
 };

@@ -134,9 +134,9 @@ const Dashboard = ({ zones, stalls, evacMode, simActive, setSimActive }) => {
         style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(2, 1fr)',
-          gridAutoRows: 'minmax(300px, 400px)',
-          gap: '24px',
-          paddingBottom: '24px'
+          gridAutoRows: 'minmax(320px, auto)',
+          gap: '48px',
+          paddingBottom: '48px'
         }}
       >
         {layout.map((widget, index) => {
@@ -161,19 +161,40 @@ const Dashboard = ({ zones, stalls, evacMode, simActive, setSimActive }) => {
                 flexDirection: 'column',
                 opacity: isDragging ? 0.5 : 1,
                 transition: 'opacity 0.2s, transform 0.2s',
-                outline: 'none'
+                outline: 'none',
+                background: 'var(--bg-card)',
+                borderRadius: '24px',
+                border: '1px solid var(--border-subtle)',
+                boxShadow: 'var(--shadow-premium)',
+                overflow: 'hidden'
               }}
               className="dashboard-widget"
             >
-              {/* Drag handle */}
+              {/* Drag handle & Widget Header */}
               <div
                 aria-hidden="true"
-                style={{ background: 'var(--bg-card-inner)', display: 'flex', justifyContent: 'center', padding: '5px', borderRadius: '8px 8px 0 0', border: '1px solid var(--border-subtle)', borderBottom: 'none' }}
+                style={{ 
+                  background: 'var(--bg-card-inner)', 
+                  display: 'flex', 
+                  justifyContent: 'space-between', 
+                  alignItems: 'center',
+                  padding: '12px 24px', 
+                  borderBottom: '1px solid var(--border-subtle)' 
+                }}
               >
-                <div style={{ width: '40px', height: '4px', background: 'var(--border-subtle)', borderRadius: '2px' }} />
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <div style={{ width: '32px', height: '4px', background: 'var(--border-subtle)', borderRadius: '2px' }} />
+                    <span style={{ fontSize: '0.65rem', fontWeight: 800, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '1px' }}>
+                        {widget.id === 'map' ? 'Architectural Telemetry' : 'Tactical Feed'}
+                    </span>
+                 </div>
+                 <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: 6, height: 6, borderRadius: '50%', background: 'var(--accent-primary)' }} className="animate-pulse" />
+                    <span style={{ fontSize: '0.6rem', color: 'var(--text-muted)' }}>LIVE</span>
+                 </div>
               </div>
 
-              <div style={{ flex: 1, overflow: 'hidden' }}>
+              <div style={{ flex: 1, padding: '32px', overflow: 'hidden' }}>
                 {renderWidget(widget.id)}
               </div>
             </div>

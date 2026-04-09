@@ -1,12 +1,27 @@
 import React, { useId } from 'react';
 
-const NAV_ITEMS = [
-  { id: 'dashboard', label: 'Overview Base' },
-  { id: 'venues',    label: 'Venue Index' },
-  { id: 'hardware',  label: 'Edge Sensors' },
-  { id: 'analytics', label: 'Traffic Analysis' },
-  { id: 'audit',     label: 'System Audit' },
-  { id: 'settings',  label: 'Parameters' },
+const NAV_GROUPS = [
+  {
+    title: 'Strategic Overview',
+    items: [
+      { id: 'dashboard', label: 'Tactical Base' },
+      { id: 'venues',    label: 'Venue Index' },
+    ]
+  },
+  {
+    title: 'Precision Intelligence',
+    items: [
+      { id: 'hardware',  label: 'Edge Sensors' },
+      { id: 'analytics', label: 'Traffic Analysis' },
+    ]
+  },
+  {
+    title: 'System & Audit',
+    items: [
+      { id: 'audit',     label: 'Tactical Log' },
+      { id: 'settings',  label: 'Parameters' },
+    ]
+  }
 ];
 
 // Inline SVG icon set — aria-hidden on all (decorative)
@@ -68,47 +83,62 @@ const Sidebar = ({ activeTab, setActiveTab, evacMode, setEvacMode, connected }) 
       </div>
 
       {/* Nav */}
-      <nav id={navId} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '2px', padding: '0 12px' }}>
-        {NAV_ITEMS.map(tab => {
-          const isActive = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              id={`nav-${tab.id}`}
-              type="button"
-              onClick={() => setActiveTab(tab.id)}
-              aria-current={isActive ? 'page' : undefined}
-              aria-label={tab.label}
-              className={`sidebar-nav-btn${isActive ? ' sidebar-nav-btn--active' : ''}`}
-              style={{
-                padding: '11px 16px',
-                border: 'none',
-                borderRadius: '8px',
-                background: isActive ? 'var(--bg-card-inner)' : 'transparent',
-                color: isActive ? 'var(--accent-primary)' : 'var(--text-muted)',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '14px',
-                cursor: 'pointer',
-                fontSize: '0.88rem',
-                fontWeight: isActive ? 600 : 500,
-                transition: 'all var(--transition-fast)',
-                position: 'relative',
-                width: '100%',
-                textAlign: 'left'
-              }}
-            >
-              {isActive && (
-                <div
-                  aria-hidden="true"
-                  style={{ position: 'absolute', left: 0, top: '20%', bottom: '20%', width: '3px', background: 'var(--accent-primary)', borderRadius: '0 4px 4px 0' }}
-                />
-              )}
-              <SvgIcon name={tab.id} />
-              {tab.label}
-            </button>
-          );
-        })}
+      <nav id={navId} style={{ flex: 1, display: 'flex', flexDirection: 'column', gap: '20px', padding: '0 12px', overflowY: 'auto' }}>
+        {NAV_GROUPS.map((group, gIdx) => (
+          <div key={gIdx} style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+            <h3 style={{ 
+              padding: '0 16px', 
+              fontSize: '0.65rem', 
+              fontWeight: 800, 
+              color: 'var(--text-muted)', 
+              textTransform: 'uppercase', 
+              letterSpacing: '1.5px',
+              marginBottom: '4px'
+            }}>
+              {group.title}
+            </h3>
+            {group.items.map(tab => {
+              const isActive = activeTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  id={`nav-${tab.id}`}
+                  type="button"
+                  onClick={() => setActiveTab(tab.id)}
+                  aria-current={isActive ? 'page' : undefined}
+                  aria-label={tab.label}
+                  className={`sidebar-nav-btn${isActive ? ' sidebar-nav-btn--active' : ''}`}
+                  style={{
+                    padding: '10px 16px',
+                    border: 'none',
+                    borderRadius: '8px',
+                    background: isActive ? 'var(--bg-card-inner)' : 'transparent',
+                    color: isActive ? 'var(--accent-primary)' : 'var(--text-muted)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '14px',
+                    cursor: 'pointer',
+                    fontSize: '0.85rem',
+                    fontWeight: isActive ? 600 : 500,
+                    transition: 'all var(--transition-fast)',
+                    position: 'relative',
+                    width: '100%',
+                    textAlign: 'left'
+                  }}
+                >
+                  {isActive && (
+                    <div
+                      aria-hidden="true"
+                      style={{ position: 'absolute', left: 0, top: '20%', bottom: '20%', width: '3px', background: 'var(--accent-primary)', borderRadius: '0 4px 4px 0' }}
+                    />
+                  )}
+                  <SvgIcon name={tab.id} />
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+        ))}
       </nav>
 
       {/* EVAC Mode Toggle */}
