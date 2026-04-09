@@ -5,8 +5,10 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 
 /**
  * Sanitize user input for chat messages.
- * Allows natural language (spaces, apostrophes, question marks, punctuation)
- * while blocking script injection characters.
+ * Strips HTML tags, script injection tokens, and control characters 
+ * while preserving natural language (spaces, apostrophes, etc.).
+ * @param {string} input - Raw user input
+ * @returns {string} Sanitized string
  */
 export const sanitizeInput = (input) => {
   // Strip HTML/script tags and dangerous chars, but preserve NLP-friendly punctuation

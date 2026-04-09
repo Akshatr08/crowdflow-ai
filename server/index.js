@@ -16,12 +16,35 @@ const app = express();
 // ==========================================
 
 // 1. Helmet: HTTP security headers (HSTS, No-Sniff, XSS, COOP, etc.)
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      scriptSrc: ["'self'", "'unsafe-inline'"], // unsafe-inline allowed for Vite dev mode, would be nonced in prod
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+      imgSrc: ["'self'", "data:", "https://images.unsplash.com"],
+      connectSrc: ["'self'", "https://api.stadiumos.ai"], // Placeholder for real domain
+      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      objectSrc: ["'none'"],
+      upgradeInsecureRequests: [],
+    },
+  },
+  referrerPolicy: { policy: 'strict-origin-when-cross-origin' },
+}));
 
-// 2. Structured request logging with Morgan (audit trail)
+// 2. Additional Security Controls
+app.disable('x-powered-by'); // Hide server tech stack
+app.use((req, res, next) => {
+  res.setHeader('X-Frame-Options', 'DENY');
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  next();
+});
+
+// 3. Structured request logging with Morgan (audit trail)
 app.use(morgan('combined'));
 
-// 3. Strict CORS: Reject unauthorized cross-origin requests
+// 4. Strict CORS: Reject unauthorized cross-origin requests
 app.use(cors({
   origin: process.env.CLIENT_URL || 'http://localhost:5173',
   optionsSuccessStatus: 200
@@ -53,13 +76,21 @@ const chatLimiter = rateLimit({
 const DENSITY_LEVELS = ['low', 'medium', 'high'];
 const DENSITY_PENALTY = { low: 0, medium: 5, high: 12 };
 
-/** Deterministically compute a stall multiplier from density string */
+/**
+ * Deterministically compute a stall multiplier from density string.
+ * Used for wait-time simulation and scoring.
+ * @param {string} d - Density level ('low', 'medium', 'high')
+ * @returns {number} Multiplier factor
+ */
 const densityMultiplier = (d) => d === 'high' ? 4.5 : d === 'medium' ? 2.5 : 1;
 
 let zones = [...initialZones];
 let stalls = [...initialStalls];
 
-// Recalculation logic helper
+/**
+ * Recalculate all stall metrics based on current simulation state.
+ * Mutates the global stalls array with fresh wait times and scores.
+ */
 const updateStallData = () => {
   stalls = stalls.map(stall => {
     const d = simulationActive ? 'high' : DENSITY_LEVELS[Math.floor(Math.random() * DENSITY_LEVELS.length)];
@@ -157,6 +188,8 @@ const genAI = geminiKey ? new GoogleGenerativeAI(geminiKey) : null;
 /**
  * Sanitize context strings before injecting into LLM prompt.
  * Strips prompt-injection attempts (e.g. "Ignore previous instructions...")
+ * @param {string} str - Raw context string or JSON
+ * @returns {string} Sanitized string
  */
 const sanitizeContext = (str) => {
   return str

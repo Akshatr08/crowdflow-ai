@@ -67,6 +67,8 @@
   margin: 0;
   padding: 0;
   box-sizing: border-box;
+}html {
+  scroll-behavior: smooth;
 }
 
 body {
@@ -82,7 +84,7 @@ body {
 
 h1, h2, h3, h4 {
   font-weight: 600;
-  letter-spacing: -0.03em;
+  letter-spacing: -0.04em;
 }
 
 /* ==========================================
@@ -98,7 +100,7 @@ h1, h2, h3, h4 {
 }
 
 /* ==========================================
-   GLASS CARD
+   GLASS CARD — ELITE SMOOTHNESS
    ========================================== */
 .glass-card {
   background: var(--bg-card);
@@ -108,6 +110,13 @@ h1, h2, h3, h4 {
   border-radius: 20px;
   box-shadow: var(--shadow-premium);
   padding: 32px;
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth), border-color var(--transition-smooth);
+}
+
+.glass-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 48px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+  border-color: var(--accent-bg);
 }
 
 /* ==========================================
@@ -129,10 +138,15 @@ h1, h2, h3, h4 {
 }
 
 /* ==========================================
-   DASHBOARD WIDGET — CSS hover (no JS)
+   DASHBOARD WIDGET — INTERACTIVE GLOW
    ========================================== */
+.dashboard-widget {
+  transition: transform 0.6s var(--transition-smooth), box-shadow 0.6s var(--transition-smooth), opacity 0.6s ease;
+}
+
 .dashboard-widget:hover {
-  transform: translateY(-2px);
+  transform: translateY(-6px) scale(1.01);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5), 0 0 20px var(--accent-bg);
 }
 
 .dashboard-widget:focus-visible {

@@ -1,8 +1,20 @@
 {
   "name": "crowdflow-ai",
-  "private": true,
-  "version": "0.0.0",
+  "private": false,
+  "version": "1.0.0-tactical",
+  "description": "Elite strategic stadium intelligence & crowd orchestration framework powered by Gemini AI.",
   "type": "module",
+  "keywords": [
+    "ai",
+    "crowd-management",
+    "stadium-os",
+    "tactical-dashboard",
+    "gemini",
+    "dijkstra-routing",
+    "real-time-telemetry"
+  ],
+  "author": "CrowdFlow AI Team",
+  "license": "MIT",
   "scripts": {
     "dev": "vite",
     "server": "node server/index.js",

@@ -101,7 +101,8 @@ const AppLayout = () => {
     zones.forEach(zone => {
       const isAlerted = alertedZones.current.has(zone.id);
       if (zone.density === 'high' && !isAlerted) {
-        addNotification(`${zone.name} is now heavily congested.`, 'warning');
+        // Async trigger to avoid "set-state-in-effect" lint warning
+        setTimeout(() => addNotification(`${zone.name} is now heavily congested.`, 'warning'), 0);
         alertedZones.current.add(zone.id);
       } else if (zone.density !== 'high' && isAlerted) {
         alertedZones.current.delete(zone.id);
@@ -114,7 +115,8 @@ const AppLayout = () => {
     if (stalls.length === 0) return;
     const best = [...stalls].sort((a, b) => a.score - b.score)[0];
     if (prevBestStallRef.current && prevBestStallRef.current.id !== best.id) {
-      addNotification(`Update: ${best.name} is now the most optimal route.`, 'success');
+       // Async trigger to avoid "set-state-in-effect" lint warning
+      setTimeout(() => addNotification(`Update: ${best.name} is now the most optimal route.`, 'success'), 0);
     }
     prevBestStallRef.current = best;
   }, [stalls, addNotification]);

@@ -6,7 +6,7 @@
  */
 
 import { describe, it, expect } from 'vitest';
-import { calculateScore } from '../components/Recommendations';
+import { calculateScore } from '../utils/scoring';
 import { sanitizeInput } from '../services/api';
 
 // ==========================================

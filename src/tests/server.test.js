@@ -5,7 +5,7 @@
  * Includes rate limiting, validation, and error cases.
  */
 
-import { describe, it, expect, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, beforeAll } from 'vitest';
 import request from 'supertest';
 
 // We need to import the app but avoid actually starting the server on a port.

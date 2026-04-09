@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import AppLayout from './components/AppLayout';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,9 @@ function App() {
 
   return (
     <div className="App">
-      <AppLayout />
+      <ErrorBoundary>
+        <AppLayout />
+      </ErrorBoundary>
     </div>
   );
 }

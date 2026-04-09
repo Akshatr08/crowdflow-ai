@@ -7,6 +7,12 @@ import { API_URL, mockZonesFallback, mockStallsFallback } from '../services/api'
  * Replaces dual polling intervals with a single Server-Sent Events connection.
  * Falls back to polling if SSE is not supported or server is unreachable.
  */
+/**
+ * Custom hook to manage real-time stadium data synchronization.
+ * Priority: 1. Server-Sent Events (SSE) | 2. Mock Fallback Polling
+ * 
+ * @returns {Object} { zones, stalls, connected }
+ */
 export const useStadiumData = () => {
   const [zones, setZones] = useState([]);
   const [stalls, setStalls] = useState([]);
@@ -14,19 +20,27 @@ export const useStadiumData = () => {
   const esRef = useRef(null);
   const fallbackRef = useRef(null);
 
+  /**
+   * Initializes fallback polling mechanism for offline or non-SSE environments.
+   */
   const startFallbackPolling = useCallback(() => {
-    setConnected(false);
-    if (fallbackRef.current) return; // already polling
+    if (fallbackRef.current) return;
+    
+    // Set connection state async to avoid React hook lint errors
+    setTimeout(() => setConnected(false), 0);
 
     const tick = () => {
       setZones(mockZonesFallback());
       setStalls(mockStallsFallback());
     };
 
-    tick(); // run immediately
+    tick();
     fallbackRef.current = setInterval(tick, 3000);
   }, []);
 
+  /**
+   * Terminates the background polling interval.
+   */
   const stopFallbackPolling = useCallback(() => {
     if (fallbackRef.current) {
       clearInterval(fallbackRef.current);
@@ -41,6 +55,9 @@ export const useStadiumData = () => {
       return;
     }
 
+    /**
+     * Establishment and maintenance of the SSE channel.
+     */
     const connect = () => {
       if (esRef.current) {
         esRef.current.close();

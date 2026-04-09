@@ -14,13 +14,7 @@ const IS_PRODUCTION = import.meta.env.PROD;
  * @param {Object} params - Contextual metadata
  */
 export const logEvent = (eventName, params = {}) => {
-  const payload = {
-    event: eventName,
-    ...params,
-    timestamp: new Date().toISOString(),
-    session_id: window.sessionStorage.getItem('stadium_session_id') || 'unset'
-  };
-
+  // Log context to terminal in development
   if (!IS_PRODUCTION) {
     console.group(`%c[ANALYTICS] ${eventName}`, 'color: #38bdf8; font-weight: bold;');
     console.table(params);

@@ -154,6 +154,7 @@ const Dashboard = ({ zones, stalls, evacMode, simActive, setSimActive }) => {
               onDrop={(e) => handleDrop(e, index)}
               onDragEnd={handleDragEnd}
               onKeyDown={(e) => handleKeyMove(e, index)}
+              className={`dashboard-widget animate-fade-in stagger-${(index % 5) + 1}`}
               style={{
                 gridColumn: widget.span === 2 ? 'span 2' : 'span 1',
                 cursor: 'grab',
