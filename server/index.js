@@ -155,7 +155,7 @@ app.post('/api/simulate', (req, res) => {
   
   // Instantly trigger an update for immediate UI feedback
   zones = zones.map(z => ({ ...z, density: 'high' }));
-  updateStallData();
+  updateSimulationState();
   
   if (simulationTimer) clearTimeout(simulationTimer);
   simulationTimer = setTimeout(() => {
