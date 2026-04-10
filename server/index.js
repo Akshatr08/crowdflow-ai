@@ -5,7 +5,12 @@ import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import morgan from 'morgan';
 import { GoogleGenerativeAI } from '@google/generative-ai';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import { initialZones, initialStalls } from './dataStructs.js';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 dotenv.config();
 
@@ -46,7 +51,7 @@ app.use(morgan('combined'));
 
 // 4. Strict CORS: Reject unauthorized cross-origin requests
 app.use(cors({
-  origin: process.env.CLIENT_URL || 'http://localhost:5173',
+  origin: process.env.CLIENT_URL || true, // Allow same-origin or specified client
   optionsSuccessStatus: 200
 }));
 
@@ -271,6 +276,21 @@ app.get('/api/health', (_req, res) => {
     stallsCount: stalls.length,
     timestamp: new Date().toISOString()
   });
+});
+
+// ==========================================
+// STATIC ASSETS & CLIENT ROUTING
+// ==========================================
+
+const distPath = path.join(__dirname, '../dist');
+app.use(express.static(distPath));
+
+// Fallback for SPA routing: serve index.html for all non-API routes
+app.get('*', (req, res) => {
+  if (req.path.startsWith('/api')) {
+    return res.status(404).json({ error: 'API endpoint not found' });
+  }
+  res.sendFile(path.join(distPath, 'index.html'));
 });
 
 // ==========================================
