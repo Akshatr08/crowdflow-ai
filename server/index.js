@@ -94,9 +94,9 @@ let stalls = [...initialStalls];
 
 /**
  * Recalculate all stall metrics based on current simulation state.
- * Mutates the global stalls array with fresh wait times and scores.
  */
-const updateStallData = () => {
+const updateSimulationState = () => {
+  // Update Stalls
   stalls = stalls.map(stall => {
     const d = simulationActive ? 'high' : DENSITY_LEVELS[Math.floor(Math.random() * DENSITY_LEVELS.length)];
     const mult = densityMultiplier(d);
@@ -104,6 +104,24 @@ const updateStallData = () => {
     const score = wait + (stall.distance / 20) + DENSITY_PENALTY[d];
     return { ...stall, density: d, waitTime: wait, score: Math.round(score) };
   });
+
+  // Calculate Zone Risk Scores (Deterministic Engineering Model)
+  zones = zones.map(z => {
+    const baseRisk = z.density === 'high' ? 75 : z.density === 'medium' ? 30 : 5;
+    const chaosBonus = simulationActive ? 20 : 0;
+    const riskScore = Math.min(100, baseRisk + chaosBonus + Math.floor(Math.random() * 10));
+    return { ...z, riskScore, status: riskScore > 80 ? 'CRITICAL' : riskScore > 50 ? 'WARNING' : 'STABLE' };
+  });
+
+  // Hardware Health Virtualization
+  const hardwareHealth = {
+    sensors: 98 + (simulationActive ? -5 : 0),
+    gateways: 100,
+    latency: simulationActive ? '42ms' : '12ms',
+    lastCalibration: new Date().toISOString()
+  };
+
+  return { zones, stalls, hardwareHealth };
 };
 
 // Simulation State
@@ -125,8 +143,8 @@ if (process.env.NODE_ENV !== 'test') {
     }
   }, 2500);
 
-  // Stall wait time recalculation tick
-  setInterval(updateStallData, 4000);
+  // Global state recalculation tick
+  setInterval(updateSimulationState, 4000);
 }
 
 app.post('/api/simulate', (req, res) => {
@@ -162,7 +180,8 @@ app.get('/api/stream', (req, res) => {
   res.flushHeaders();
 
   const sendState = () => {
-    const payload = JSON.stringify({ zones, stalls });
+    const state = updateSimulationState();
+    const payload = JSON.stringify(state);
     res.write(`data: ${payload}\n\n`);
   };
 

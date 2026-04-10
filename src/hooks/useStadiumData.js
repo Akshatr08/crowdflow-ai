@@ -16,6 +16,7 @@ import { API_URL, mockZonesFallback, mockStallsFallback } from '../services/api'
 export const useStadiumData = () => {
   const [zones, setZones] = useState([]);
   const [stalls, setStalls] = useState([]);
+  const [hardwareHealth, setHardwareHealth] = useState(null);
   const [connected, setConnected] = useState(false);
   const esRef = useRef(null);
   const fallbackRef = useRef(null);
@@ -73,9 +74,10 @@ export const useStadiumData = () => {
 
       es.onmessage = (event) => {
         try {
-          const { zones: z, stalls: s } = JSON.parse(event.data);
+          const { zones: z, stalls: s, hardwareHealth: h } = JSON.parse(event.data);
           if (Array.isArray(z) && z.length > 0) setZones(z);
           if (Array.isArray(s) && s.length > 0) setStalls(s);
+          if (h) setHardwareHealth(h);
         } catch {
           // malformed frame — ignore
         }
@@ -106,5 +108,5 @@ export const useStadiumData = () => {
     };
   }, [startFallbackPolling, stopFallbackPolling]);
 
-  return { zones, stalls, connected };
+  return { zones, stalls, hardwareHealth, connected };
 };

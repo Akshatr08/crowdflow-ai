@@ -44,7 +44,7 @@ const AppLayout = () => {
   const [simActive, setSimActive] = useState(false);
 
   // SSE-based real-time data (replaces dual polling intervals)
-  const { zones, stalls, connected } = useStadiumData();
+  const { zones, stalls, hardwareHealth, connected } = useStadiumData();
 
   // Apply theme globally; EVAC mode overrides to crimson
   useEffect(() => {
@@ -123,14 +123,14 @@ const AppLayout = () => {
 
   const renderContent = () => {
     switch (activeTab) {
-      case 'dashboard': return <Dashboard zones={zones} stalls={stalls} evacMode={evacMode} simActive={simActive} setSimActive={setSimActive} />;
+      case 'dashboard': return <Dashboard zones={zones} stalls={stalls} hardwareHealth={hardwareHealth} evacMode={evacMode} simActive={simActive} setSimActive={setSimActive} />;
       case 'venues':    return <Suspense fallback={<TabFallback tab="venues" />}><Venues /></Suspense>;
       case 'hardware':  return <Suspense fallback={<TabFallback tab="hardware" />}><Hardware zones={zones} /></Suspense>;
       case 'analytics': return <Suspense fallback={<TabFallback tab="analytics" />}><Analytics zones={zones} /></Suspense>;
       case 'audit':     return <Suspense fallback={<TabFallback tab="audit" />}><Audit auditLogs={auditLogs} /></Suspense>;
       case 'settings':  return <Suspense fallback={<TabFallback tab="settings" />}><Settings theme={theme} toggleTheme={toggleTheme} /></Suspense>;
       case 'operator':  return <Suspense fallback={<TabFallback tab="operator" />}><Operator /></Suspense>;
-      default:          return <Dashboard zones={zones} stalls={stalls} evacMode={evacMode} simActive={simActive} setSimActive={setSimActive} />;
+      default:          return <Dashboard zones={zones} stalls={stalls} hardwareHealth={hardwareHealth} evacMode={evacMode} simActive={simActive} setSimActive={setSimActive} />;
     }
   };
 

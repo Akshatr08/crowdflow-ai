@@ -58,8 +58,8 @@ describe('Dashboard', () => {
     
     // Target the specific widget elements by their aria-label prefix
     const items = within(widgetList).getAllByLabelText(/Widget: /i);
-    // 5 widgets: map, stalls, recommendations, cctv, chat
-    expect(items.length).toBe(5);
+    // 6 widgets: map, audit, stalls, recommendations, cctv, chat
+    expect(items.length).toBe(6);
   });
 });
 

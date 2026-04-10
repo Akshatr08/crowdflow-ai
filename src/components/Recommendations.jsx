@@ -3,7 +3,10 @@ import { calculateScore, calculateExitNode } from '../utils/scoring';
 
 /**
  * @component Recommendations
+ * 
  * AI-driven routing engine using weighted score analysis and Dijkstra pathfinding.
+ * Orchestrates AI routing strategies based on live telemetry analysis.
+ * Features a Dijkstra-mode override for emergency evacuation scenarios.
  */
 const Recommendations = ({ evacMode, stalls = [], zones = [] }) => {
 

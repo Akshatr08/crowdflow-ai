@@ -4,9 +4,11 @@ import Recommendations from './Recommendations';
 import ChatAssistant from './ChatAssistant';
 import StallWaitTimes from './StallWaitTimes';
 import CctvFeed from './CctvFeed';
+import TacticalAudit from './TacticalAudit';
 
 const WIDGETS = [
   { id: 'map',             span: 2, label: 'Live Sector Topography' },
+  { id: 'audit',           span: 1, label: 'Tactical Audit Log' },
   { id: 'stalls',          span: 1, label: 'Stall Wait Times' },
   { id: 'recommendations', span: 1, label: 'AI Routing Analysis' },
   { id: 'cctv',            span: 1, label: 'CCTV Feed' },
@@ -17,7 +19,7 @@ const WIDGETS = [
  * @component Dashboard
  * Drag-and-drop grid layout with keyboard move support and proper ARIA.
  */
-const Dashboard = ({ zones, stalls, evacMode, simActive, setSimActive }) => {
+const Dashboard = ({ zones, stalls, hardwareHealth, evacMode, simActive, setSimActive }) => {
   const [layout, setLayout] = useState(WIDGETS);
   const [draggedIdx, setDraggedIdx] = useState(null);
 
@@ -92,6 +94,7 @@ const Dashboard = ({ zones, stalls, evacMode, simActive, setSimActive }) => {
       case 'recommendations': return <Recommendations evacMode={evacMode} stalls={stalls} zones={zones} />;
       case 'cctv':            return <CctvFeed />;
       case 'chat':            return <ChatAssistant stalls={stalls} zones={zones} />;
+      case 'audit':           return <TacticalAudit zones={zones} stalls={stalls} active={simActive} />;
       default:                return null;
     }
   };
@@ -124,6 +127,21 @@ const Dashboard = ({ zones, stalls, evacMode, simActive, setSimActive }) => {
             <div style={{ width: '8px', height: '8px', background: simActive ? 'var(--accent-danger)' : 'var(--accent-success)', borderRadius: '50%' }} className="animate-pulse" aria-hidden="true" />
             {simActive ? 'SATURATION SPIKE' : 'SYSTEM SECURE'}
           </div>
+          
+          {/* Elite Header: Hardware Status */}
+          {hardwareHealth && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '0.75rem', background: 'var(--bg-card)', padding: '6px 20px', borderRadius: '20px', border: '1px solid var(--border-subtle)', color: 'var(--text-muted)' }}>
+               <div style={{ display: 'flex', gap: '8px' }}>
+                  <span style={{ color: 'var(--accent-primary)', fontWeight: 'bold' }}>SENSORS:</span> {hardwareHealth.sensors}%
+               </div>
+               <div style={{ display: 'flex', gap: '8px' }}>
+                  <span style={{ color: 'var(--accent-primary)', fontWeight: 'bold' }}>LATENCY:</span> {hardwareHealth.latency}
+               </div>
+               <div style={{ display: 'flex', gap: '8px' }}>
+                  <span style={{ color: 'var(--accent-success)', fontWeight: 'bold' }}>SHARDS:</span> 1024/1024
+               </div>
+            </div>
+          )}
         </div>
       </div>
 

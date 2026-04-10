@@ -14,7 +14,10 @@ const stableStaffCount = (density, zoneId) =>
 
 /**
  * @component StadiumMap
+ * 
  * Architectural SVG schematic representing the stadium sectors and pitch.
+ * Visualizes real-time crowd saturation and risk distribution using 
+ * deterministic data tokens.
  */
 const StadiumMap = ({ zones = [] }) => {
   const [selectedZone, setSelectedZone] = useState(null);

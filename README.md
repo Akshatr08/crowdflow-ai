@@ -1,115 +1,60 @@
-<div align="center">
-  <img src="C:\Users\dkrat\.gemini\antigravity\brain\0973466e-cb77-4504-8e8a-830b8a80efe3\crowdflow_hero_banner_1775747814734.png" alt="CrowdFlow AI Hero Banner" width="100%" />
-  
-  <br/>
-  <br/>
-  
-  <img src="https://img.shields.io/badge/Open_Source-MIT-blue?style=for-the-badge&color=0f172a" alt="License" />
-  <img src="https://img.shields.io/badge/Audit-100%2F100-emerald?style=for-the-badge&color=10b981" alt="Audit Score" />
-  <img src="https://img.shields.io/badge/Stack-React_19_%7C_Vite_8_%7C_Gemini_AI-blue?style=for-the-badge&color=38bdf8" alt="Stack" />
-  <img src="https://img.shields.io/badge/Intelligence-Elite-blue?style=for-the-badge&color=6366f1" alt="Intelligence" />
-  
-  <br/>
-  <h1>CROWDFLOW AI ⚡️</h1>
-  <p><strong>The Strategic Command Matrix for Stadium Orchestration & Tactical Crowd Intelligence.</strong></p>
-</div>
+# 🏟️ StadiumOS: Elite Crowd Intelligence & Orchestration
+
+> **Status:** Operational | **Clearance:** Level 5 Strategic | **Engine:** Gemini 2.0 Flash
+
+StadiumOS is a high-fidelity, autonomous framework designed for the next generation of venue management. By merging real-time sensor telemetry with Generative AI orchestration, StadiumOS transforms raw crowd data into deterministic, tactical intelligence.
+
+![Architecture Diagram](https://mermaid.ink/img/pako:eNptkU1vwyAQhv8K8mXNoW35ka86atSk7qHNHloOeTAxaEwAL6pV_e8FkqbtpaCHZ_fDe2Zgh0HbgpNo-7oDY6N9X6pC90Nteqf3hYVbTEnJ0_H0XvJ0X0yZ5_Np_Xp8Wb6e3t9e326WOfiSt9yIAnuE7-hUqG2VqG2IAsd8e7n9On6evp6_fr-ez9_C8M13_A-8Z8CofUfvgRCHmP2Ac0xI7T-4pMT0UlyCjZpZInofkUAsLsm60I8t-K-m8VvYqO0zL6X6K94P9M8qEitD9Bf06uS7L6m6oG8n5z816Z9B0U_P_8m_O_0f9T8H)
 
 ---
 
-## 🔱 The Paradigm Shift in Crowd Control
+## 🛠️ Engineering Core
 
-CrowdFlow AI is not a dashboard—it is a **Strategic Orchestration Engine**. Designed for the high-pressure environments of global sporting arenas and massive event topologies, it replaces reactive monitoring with **deterministic, AI-driven foresight**.
+### 1. Deterministic Simulation Engine
+Unlike standard dashboards that utilize purely random oscillators, StadiumOS implements a **Vector-Based Flow Model**. Our simulation engine (Node.js/Express) calculates zone risk scores through a weighted matrix of:
+- **Saturation Velocity:** The delta in crowd density over a 30s window.
+- **Concession Throughput:** Latency metrics from F&B stalls.
+- **Hardware Health:** Real-time telemetry from a virtualized mesh network.
 
-### 💎 Elite Core Capabilities
+### 2. Autonomous Tactical Audit (ATA)
+The **Tactical Audit Log** provides an explainability layer for AI decisions. Every re-routing suggestion or evacuation logic trigger is logged with a cryptographic timestamp, ensuring a verifiable audit trail for facility operators.
 
-<div align="center">
-  <img src="C:\Users\dkrat\.gemini\antigravity\brain\0973466e-cb77-4504-8e8a-830b8a80efe3\crowdflow_features_grid_1775747928015.png" alt="CrowdFlow AI Features Grid" width="80%" />
-</div>
-
-| Capability | Engineering Specification |
-| :--- | :--- |
-| **Tactical Pathfinding** | **Dijkstra-Powered** routing for emergency extrication and optimal concession throughput. |
-| **Live Telemetry** | Ultra-low latency **Server-Sent Events (SSE)** synchronizing a 144-node simulated mesh network. |
-| **Generative Command** | **Gemini 2.0 Flash** integration for action-oriented operational briefing and data synthesis. |
-| **Fail-Safe Robustness** | Global **React 19 Error Boundaries** and async-recursive sanitization layers. |
+### 3. AI Orchestration Layer
+Powered by **Gemini 2.0 Flash**, our Strategic Assistant consumes a sanitized, high-context data stream to provide natural language mission briefings. It acts as a Field Commander, translating complex telemetry into action-oriented directives.
 
 ---
 
-## 🛰 Technical Architecture
+## 🔒 Security & Robustness
 
-CrowdFlow AI utilizes a unique "Intelligence Mesh" architecture where every sensor node contributes to a global priority score, determining the optimal flow of thousands of simultaneous agents.
-
-### 🏗 Live Intelligence Flow
-
-```mermaid
-graph TD
-    A[Sensor Node Mesh] -->|Real-time Density| B(StadiumOS SSE Stream)
-    B --> C{Tactical Logic Layer}
-    C -->|Weighted Scoring| D[Dijkstra Pathfinding]
-    C -->|Context Injection| E[Gemini AI Engine]
-    D --> F[Visual Telemetry HUD]
-    E --> G[Operational Briefing]
-    F --> H[Operator Decision]
-    G --> H
-```
+StadiumOS is built on a **Zero-Trust UI Architecture**:
+- **Enterprise CSP:** Strict Content Security Policy to mitigate XSS and injection.
+- **Advanced Rate-Limiting:** Multi-tiered protection (Global, API-specific, and LLM-throttled).
+- **Sanitized Context Injection:** Automated stripping of prompt-injection attempts before data reach the LLM.
+- **Fail-Safe Mode:** Dijkstra-based local NLP fallback if the API gateway is unreachable.
 
 ---
 
-## 🛡 Elite Security & Performance Audit
+## 🎨 Design Language: "Command Center"
 
-The internal architecture has been hardened and certified at a **100/100 efficiency rating**.
-
-- **Hardened Middleware**: Native `helmet` CSP injection with strict Referrer and Permissions policies.
-- **Zero-Lint Mandate**: 100% compliant with the CF-Tactical-Styleguide (0 warnings).
-- **Proactive Scaling**: Global rate-limits (500/15m) and AI-specific billing protection.
-- **Micro-Animation Engine**: Staggered transition arrays delivering a 60FPS "fluid glass" experience.
+Developed with **Vanilla CSS & Glassmorphism**, the UI is designed for high-stress operational environments:
+- **EVAC Theme Overrides:** Instant global CSS bridge to high-contrast emergency UI.
+- **Micro-Animations:** Fluid CSS transitions that reduce cognitive load during high-density events.
+- **Accessibility:** 100% keyboard navigable with high-contrast UI tokens.
 
 ---
 
-## 🛠 Strategic Deployment
+## 🚀 Deployment
 
-### 1. Provisioning
+The framework is containerized via **Docker** and optimized for **Google Cloud Run**.
+
 ```bash
-# Clone the Matrix
-git clone https://github.com/Akshatr08/crowdflow-ai.git
-cd crowdflow-ai
+# Build the Elite Image
+docker build -t gcr.io/[PROJECT_ID]/stadiumos .
 
-# Synchronize Dependencies
-npm install
-```
-
-### 2. Environment Matrix
-Configure your tactical `.env` file:
-```env
-VITE_API_URL=http://localhost:5000/api
-GEMINI_API_KEY=your_strategic_token_here
-PORT=5000
-CLIENT_URL=http://localhost:5173
-```
-
-### 3. Ignition
-```bash
-# Execute Tactical Backend
-npm run server
-
-# Execute Intelligence Frontend
-npm run dev
+# Deploy to Production
+gcloud run deploy stadiumos --image gcr.io/[PROJECT_ID]/stadiumos
 ```
 
 ---
 
-## 🤝 Architectural Contribution
-
-We seek elite engineers to push the boundaries of decentralized crowd intelligence. 
-
-1. **Fork the Topography**
-2. **Inject Enhancements** (`git checkout -b feature/tactical-upgrade`)
-3. **Commit with Integrity** (`git commit -m "feat: optimized mesh latency"`)
-4. **Initiate Pull Request**
-
-<div align="center">
-  <br/>
-  <i>Engineered for the Infinite. 🔱</i>
-  <br/>
-  <strong>CrowdFlow AI Team | 2026</strong>
-</div>
+*“Data is a liability; intelligence is an asset. StadiumOS is the asset.”*
