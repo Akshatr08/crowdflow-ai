@@ -110,22 +110,24 @@ const updateStallData = () => {
 let simulationActive = false;
 let simulationTimer = null;
 
-// Zone density update tick — uses seeded-style logic to avoid full randomness
-setInterval(() => {
-  if (simulationActive) {
-    zones = zones.map(z => ({ ...z, density: 'high' }));
-  } else {
-    zones = zones.map(z => ({
-      ...z,
-      density: Math.random() > 0.7
-        ? DENSITY_LEVELS[Math.floor(Math.random() * DENSITY_LEVELS.length)]
-        : z.density
-    }));
-  }
-}, 2500);
+if (process.env.NODE_ENV !== 'test') {
+  // Zone density update tick — uses seeded-style logic to avoid full randomness
+  setInterval(() => {
+    if (simulationActive) {
+      zones = zones.map(z => ({ ...z, density: 'high' }));
+    } else {
+      zones = zones.map(z => ({
+        ...z,
+        density: Math.random() > 0.7
+          ? DENSITY_LEVELS[Math.floor(Math.random() * DENSITY_LEVELS.length)]
+          : z.density
+      }));
+    }
+  }, 2500);
 
-// Stall wait time recalculation tick
-setInterval(updateStallData, 4000);
+  // Stall wait time recalculation tick
+  setInterval(updateStallData, 4000);
+}
 
 app.post('/api/simulate', (req, res) => {
   if (simulationActive) return res.json({ status: 'already_active' });
@@ -286,7 +288,7 @@ const distPath = path.join(__dirname, '../dist');
 app.use(express.static(distPath));
 
 // Fallback for SPA routing: serve index.html for all non-API routes
-app.get('*', (req, res) => {
+app.get(/.*/, (req, res) => {
   if (req.path.startsWith('/api')) {
     return res.status(404).json({ error: 'API endpoint not found' });
   }

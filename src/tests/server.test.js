@@ -17,6 +17,7 @@ let app;
 beforeAll(async () => {
   // Prevent the server from actually binding to a port during tests
   process.env.PORT = '0';
+  process.env.NODE_ENV = 'test';
   process.env.GEMINI_API_KEY = ''; // Ensure AI is in disabled state
 
   // Dynamic import after env is set
