@@ -1,60 +1,163 @@
-# 🏟️ StadiumOS: Elite Crowd Intelligence & Orchestration
+# 🏟️ StadiumOS — Elite Crowd Intelligence & Orchestration
 
-> **Status:** Operational | **Clearance:** Level 5 Strategic | **Engine:** Gemini 2.0 Flash
-
-StadiumOS is a high-fidelity, autonomous framework designed for the next generation of venue management. By merging real-time sensor telemetry with Generative AI orchestration, StadiumOS transforms raw crowd data into deterministic, tactical intelligence.
-
-![Architecture Diagram](https://mermaid.ink/img/pako:eNptkU1vwyAQhv8K8mXNoW35ka86atSk7qHNHloOeTAxaEwAL6pV_e8FkqbtpaCHZ_fDe2Zgh0HbgpNo-7oDY6N9X6pC90Nteqf3hYVbTEnJ0_H0XvJ0X0yZ5_Np_Xp8Wb6e3t9e326WOfiSt9yIAnuE7-hUqG2VqG2IAsd8e7n9On6evp6_fr-ez9_C8M13_A-8Z8CofUfvgRCHmP2Ac0xI7T-4pMT0UlyCjZpZInofkUAsLsm60I8t-K-m8VvYqO0zL6X6K94P9M8qEitD9Bf06uS7L6m6oG8n5z816Z9B0U_P_8m_O_0f9T8H)
+> **Status:** Operational  
+> **Engine:** Gemini 2.0 Flash  
+> **Objective:** Transform raw crowd data into actionable intelligence
 
 ---
 
-## 🛠️ Engineering Core
+## 🚨 Problem
 
-### 1. Deterministic Simulation Engine
-Unlike standard dashboards that utilize purely random oscillators, StadiumOS implements a **Vector-Based Flow Model**. Our simulation engine (Node.js/Express) calculates zone risk scores through a weighted matrix of:
-- **Saturation Velocity:** The delta in crowd density over a 30s window.
-- **Concession Throughput:** Latency metrics from F&B stalls.
-- **Hardware Health:** Real-time telemetry from a virtualized mesh network.
+Large-scale sporting venues suffer from:
+- overcrowded entry/exit gates  
+- long waiting times at stalls  
+- inefficient crowd movement  
+- lack of real-time guidance  
 
-### 2. Autonomous Tactical Audit (ATA)
-The **Tactical Audit Log** provides an explainability layer for AI decisions. Every re-routing suggestion or evacuation logic trigger is logged with a cryptographic timestamp, ensuring a verifiable audit trail for facility operators.
+This results in poor attendee experience and operational inefficiencies.
+
+---
+
+## 💡 Solution
+
+StadiumOS is a smart AI-powered system that:
+- analyzes crowd conditions (simulated real-time data)
+- predicts waiting times and congestion
+- provides optimized recommendations and alerts
+
+It acts as a **real-time decision assistant for stadium environments**.
+
+---
+
+## ⚙️ Core Features
+
+### 🧠 Smart Recommendation Engine
+- Suggests optimal routes, gates, and stalls  
+- Based on:
+  - crowd density  
+  - waiting time  
+  - distance  
+
+---
+
+### 📊 Crowd Simulation Engine
+- Simulates real-time crowd density across multiple zones  
+- Dynamic updates to mimic real-world fluctuations  
+
+---
+
+### 🤖 AI Assistant (Gemini Powered)
+- Answers:
+  - fastest food options  
+  - least crowded areas  
+  - best navigation routes  
+
+- Provides reasoning with every response  
+
+---
+
+### 🚨 Real-Time Alerts
+- Detects overcrowded zones  
+- Suggests alternative actions proactively  
+
+---
+
+## 🧮 Decision Logic (Core Scoring Model)
+
+The system calculates optimal recommendations using:
+Score = (crowd × 0.5) + (wait × 0.3) + (distance × 0.2)
+
+- Lower score = better option  
+- Ensures logical and consistent decision-making  
+
+---
+
+## 🏗️ System Architecture
+
+### 1. Simulation Layer
+- Generates crowd density and wait time data  
+- Mimics real-time stadium conditions  
+
+### 2. Decision Engine
+- Processes inputs  
+- Calculates optimal recommendations using scoring model  
 
 ### 3. AI Orchestration Layer
-Powered by **Gemini 2.0 Flash**, our Strategic Assistant consumes a sanitized, high-context data stream to provide natural language mission briefings. It acts as a Field Commander, translating complex telemetry into action-oriented directives.
+- Converts system outputs into human-readable responses  
+- Powered by Gemini API  
 
 ---
 
-## 🔒 Security & Robustness
+## 🔐 Security
 
-StadiumOS is built on a **Zero-Trust UI Architecture**:
-- **Enterprise CSP:** Strict Content Security Policy to mitigate XSS and injection.
-- **Advanced Rate-Limiting:** Multi-tiered protection (Global, API-specific, and LLM-throttled).
-- **Sanitized Context Injection:** Automated stripping of prompt-injection attempts before data reach the LLM.
-- **Fail-Safe Mode:** Dijkstra-based local NLP fallback if the API gateway is unreachable.
+- Input sanitization to prevent misuse  
+- Safe AI prompt handling  
+- No exposure of sensitive data  
 
 ---
 
-## 🎨 Design Language: "Command Center"
+## ⚡ Efficiency
 
-Developed with **Vanilla CSS & Glassmorphism**, the UI is designed for high-stress operational environments:
-- **EVAC Theme Overrides:** Instant global CSS bridge to high-contrast emergency UI.
-- **Micro-Animations:** Fluid CSS transitions that reduce cognitive load during high-density events.
-- **Accessibility:** 100% keyboard navigable with high-contrast UI tokens.
+- Lightweight simulation logic  
+- Minimal resource usage  
+- Optimized decision calculations  
+
+---
+
+## 🧪 Testing
+
+Basic validation implemented:
+
+- Recommendation system tested with multiple scenarios  
+- Ensures correct selection of optimal option  
+
+Example test:
+- High crowd vs low crowd → correct recommendation  
+
+---
+
+## ♿ Accessibility
+
+- Clean and readable UI  
+- High contrast design  
+- Simple interaction model  
+
+---
+
+## ☁️ Google Services Integration
+
+- Deployed on Google Cloud Run  
+- Designed for Firebase real-time data integration  
+- AI assistant powered by Gemini API  
 
 ---
 
 ## 🚀 Deployment
 
-The framework is containerized via **Docker** and optimized for **Google Cloud Run**.
-
-```bash
-# Build the Elite Image
-docker build -t gcr.io/[PROJECT_ID]/stadiumos .
-
-# Deploy to Production
-gcloud run deploy stadiumos --image gcr.io/[PROJECT_ID]/stadiumos
-```
+Containerized using Docker and deployed on Cloud Run.
 
 ---
 
-*“Data is a liability; intelligence is an asset. StadiumOS is the asset.”*
+## 🔮 Future Scope
+
+- Integration with real-time IoT sensors  
+- Computer vision-based crowd detection  
+- AR-based navigation inside stadiums  
+
+---
+
+## 🏁 Conclusion
+
+StadiumOS demonstrates how AI can transform chaotic crowd environments into optimized, intelligent systems for real-world applications.
+
+---
+
+## 🔗 Live Demo
+
+[https://crowdflow-ai-873934402022.asia-south1.run.app/]
+
+---
+
+## 🔗 Repository
+
+[https://github.com/Akshatr08/crowdflow-ai]
