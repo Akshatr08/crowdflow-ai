@@ -319,9 +319,12 @@ app.get(/.*/, (req, res) => {
 // ==========================================
 
 const PORT = process.env.PORT || 5000;
-app.listen(PORT, () => {
-  console.log(`[StadiumOS] Enterprise backend routing secure traffic on port ${PORT}`);
+const HOST = '0.0.0.0'; // Essential for Cloud Run routing
+
+app.listen(parseInt(PORT), HOST, () => {
+  console.log(`[StadiumOS] Enterprise backend routing secure traffic on http://${HOST}:${PORT}`);
   console.log(`[StadiumOS] AI Service: ${geminiKey ? 'gemini-2.0-flash ONLINE' : 'OFFLINE (no API key)'}`);
+  console.log(`[StadiumOS] Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 export { app }; // Named export for supertest
